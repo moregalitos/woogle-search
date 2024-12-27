@@ -10,7 +10,7 @@ function removeHtmlTags(input:string) {
 }
  export async function crawlSingleUrl(url: string, sitemap: object[], visited: Set<string>, maximumUrls: number,options:object) {
     try {
-        visited.add(url); // Mark URL as visited
+        visited.add(url); 
         if (await isCrawlable(url, options)) {
             await delay(1000); // Avoid hammering the server
             const request = await fetch(url, options);
@@ -24,17 +24,17 @@ function removeHtmlTags(input:string) {
                                                      // not triming to avoid words being stuck togehter making ranking the pages impossible
 
 
-            // Add the page to the sitemap
+           
             sitemap.push({ location: url, title, description: metaDescription, text: allText });
             console.log(`%c${url}:: has been added to the sitemap \n`,'color: green');
 
-            // Find all the links in the page
+           
             const links = Array.from(doc.querySelectorAll('a[href]')).map(a => a.getAttribute('href')!).filter(href => {
                 const fullUrl = normalizeUrl(url, href);
                 return !fullUrl.includes('#') && isHtmlLink(fullUrl) && !visited.has(fullUrl);
             });
 
-            // Process links concurrently, limit to `maximumUrls`
+           
             await processUrlsInBatch(links, sitemap, visited, 5, maximumUrls);
         } else {
             console.log(`%c${url} ::  Access has been denied \n`,'color: red');
