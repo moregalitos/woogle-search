@@ -61,7 +61,7 @@ Deno.serve(async (req:any) => {
         const image = await Deno.readFile("./client/shitty_logo.png");
         return new Response(image, {
           headers: {
-            "Content-Type": "image/png", // Change to the appropriate image type
+            "Content-Type": "image/png", 
           },
           status: 200,
         });
