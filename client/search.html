@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wooogle Search Results</title>
+    <link rel="stylesheet" href="/index.css">
+    
+
+</head>
+<body>
+    <div class="main-container">
+        <div class="search_header">
+            <input  maxlength="2048" name="q" size="55" class="lst" title="Google Search" value="" placeholder="Search woogle or type a URL">
+           
+        </div>
+        
+        <div id="search-results" class="results">
+            <!-- Search results will be populated here dynamically -->
+        </div>
+
+        <div class="footer">
+           
+        </div>
+    </div>
+
+    <script>
+        // Function to get the search query from the URL
+        function getSearchQueryFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('q') || '';  // If no query is found, return an empty string
+        }
+
+        
+        function createSearchResults(query) {
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';  
+
+            if (!query) {
+                resultsContainer.innerHTML = '<p>No search query found.</p>';
+                return;
+            }
+
+            
+               const resultItems = fetch(`${window.location.origin}/api?query=${query}`).then((response)=> response.json()).then((data)=>{
+                data.forEach(item => {
+                const resultElement = document.createElement('div');
+                resultElement.classList.add('result-item');
+                resultElement.innerHTML = `
+                   <div class="result">
+                    <a href="${item.url}" class="result_link" target="_blank">${item.url}</a>
+                    <a href="${item.url}" class="result_title" target="_blank"><h2>${item.title}</h2></a>
+                    <p class="description">${item.description}</p>
+                    </div>
+                `;
+                resultsContainer.appendChild(resultElement);
+            });
+
+               }).catch((err)=>{
+                resultsContainer.innerHTML = 'there was an error'
+                console.log(err)
+               })
+
+            
+            
+        }
+
+        // On page load, get the query and display the results
+        window.onload = function() {
+            const searchQuery = getSearchQueryFromUrl();
+            createSearchResults(searchQuery);
+            const inputField = document.querySelector(".lst")
+        inputField.addEventListener('keydown',function (event){
+            if(event.key == 'Enter'){
+                const {origin} = window.location
+                console.log(window.location)
+                window.location.replace(`${origin}/search.html?q=${inputField.value}`);
+                
+            }
+        })
+        };
+    </script>
+</body>
+</html>
